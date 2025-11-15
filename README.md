@@ -1,4 +1,4 @@
-# 🏃‍♂️ Dashboard de Análise de Atividades do Strava
+# 🏃‍♂️ Dashboard PACE de 6 de Análise de Atividades do Strava
 
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.46.1-FF4B4B?style=for-the-badge&logo=streamlit)
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python)
