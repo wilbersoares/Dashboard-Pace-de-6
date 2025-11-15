@@ -11,8 +11,7 @@ Um dashboard interativo construído com Streamlit para visualizar e analisar seu
 
 Este projeto permite que você conecte sua conta Strava de forma segura via OAuth2 e explore seu histórico de atividades através de gráficos e tabelas interativas. A aplicação oferece uma visão geral do seu desempenho, permite comparar atividades, analisar o ritmo de corridas específicas e muito mais.
 
-*(Aqui você pode adicionar um GIF ou uma screenshot do dashboard em ação)*
-`![Dashboard Screenshot](URL_DA_IMAGEM_AQUI)`
+`![Dashboard Screenshot]([URL_DA_IMAGEM_AQUI](https://i.imgur.com/FshJtLL.png))`
 
 ---
 
