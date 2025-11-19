@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Dashboard de Análise de Atividades do Strava
+=======
+# 🏃‍♂️ Dashboard PACE de 6 para Análise de Atividades do Strava
+>>>>>>> bfbf1c1fbb1c7621d782c4202739fdd9fc881a60
 
 Dashboard em Streamlit para explorar dados do Strava com KPIs, gráficos interativos e análises focadas em corridas.
 
