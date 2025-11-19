@@ -1,22 +1,43 @@
-import streamlit as st
 import pandas as pd
 import plotly.express as px
-from datetime import datetime, timedelta
+import streamlit as st
+
+COLORWAY = ["#FF4B4B", "#0ea5e9", "#22c55e", "#f59e0b", "#a855f7"]
+
+
+def _theme_tokens():
+    base = (st.get_option("theme.base") or "light").lower()
+    is_dark = base == "dark"
+    background = "#0b1221" if is_dark else "#f8fafc"
+    font = "#e2e8f0" if is_dark else "#0f172a"
+    template = "plotly_dark" if is_dark else "plotly_white"
+    return {"background": background, "font": font, "template": template}
+
+
+def _estilizar(fig):
+    tokens = _theme_tokens()
+    fig.update_layout(
+        template=tokens["template"],
+        colorway=COLORWAY,
+        plot_bgcolor=tokens["background"],
+        paper_bgcolor=tokens["background"],
+        font=dict(color=tokens["font"], size=13),
+        margin=dict(l=0, r=0, t=50, b=30),
+    )
+    return fig
+
 
 def exibir_evolucao_provas(df: pd.DataFrame):
-    """
-    Mostra a evolução do tempo em provas para distâncias específicas.
-    """
+    """Mostra a evolução do tempo em provas para distâncias específicas."""
     st.write("---")
-    st.header("🏆 Evolução em Provas")
+    st.header("Evolução em provas")
 
     df_provas = df[df["tipo_corrida"] != "Não é prova"].copy()
 
     if df_provas.empty:
-        st.info("Nenhuma prova encontrada nos dados filtrados. Marque suas atividades como 'Prova' no Strava ou no nome da atividade.")
+        st.info("Nenhuma prova encontrada. Marque suas atividades como 'Prova' ou inclua 'prova' no nome.")
         return
 
-    # Formata o tempo para exibição no gráfico (HH:MM:SS)
     def formatar_tempo_total(segundos):
         h = int(segundos // 3600)
         m = int((segundos % 3600) // 60)
@@ -25,27 +46,21 @@ def exibir_evolucao_provas(df: pd.DataFrame):
 
     df_provas["tempo_formatado"] = df_provas["tempo_total_segundos"].apply(formatar_tempo_total)
 
-    # Seletor de distância
     distancias_disponiveis = sorted(df_provas["tipo_corrida"].unique())
-    distancia_selecionada = st.selectbox(
-        "Selecione a distância da prova:",
-        options=distancias_disponiveis,
-        index=0
-    )
+    distancia_selecionada = st.selectbox("Selecione a distância da prova", options=distancias_disponiveis, index=0)
 
     df_distancia = df_provas[df_provas["tipo_corrida"] == distancia_selecionada].sort_values(by="data_inicio")
 
     if df_distancia.empty:
         st.warning(f"Nenhuma prova de '{distancia_selecionada}' encontrada.")
         return
-    
-    # Gráfico de Linha da Evolução
+
     col1, col2 = st.columns([5, 1])
     with col1:
-        st.subheader(f"Evolução do Tempo em Provas de {distancia_selecionada}")
+        st.subheader(f"Evolução do tempo em provas de {distancia_selecionada}")
     with col2:
         with st.popover("Info"):
-            st.markdown("Acompanhe seu progresso em provas de uma distância específica. Uma linha descendente indica que você está ficando mais rápido.")
+            st.markdown("Linha descendente indica melhora de tempo na distância selecionada.")
 
     fig = px.line(
         df_distancia,
@@ -57,35 +72,32 @@ def exibir_evolucao_provas(df: pd.DataFrame):
             "data_inicio": "|%d de %b, %Y",
             "tempo_total_segundos": False,
             "tempo_formatado": True,
-            "name": True
-        }
+            "name": True,
+        },
     )
 
-    # Formata o eixo Y para mostrar o tempo no formato HH:MM:SS
     fig.update_layout(
-        xaxis_title="Data da Prova",
-        yaxis_title="Tempo de Conclusão",
-        hovermode="x unified"
+        xaxis_title="Data da prova",
+        yaxis_title="Tempo de conclusão",
+        hovermode="x unified",
     )
-    
-    # Oculta os valores numéricos do eixo Y e usa os textos formatados
+
     fig.update_yaxes(
         tickvals=df_distancia["tempo_total_segundos"],
-        ticktext=df_distancia["tempo_formatado"]
+        ticktext=df_distancia["tempo_formatado"],
     )
-
+    _estilizar(fig)
     st.plotly_chart(fig, use_container_width=True)
 
-    # Tabela de dados das provas
     col1, col2 = st.columns([5, 1])
     with col1:
-        st.subheader("Histórico de Provas")
+        st.subheader("Histórico de provas")
     with col2:
         with st.popover("Info"):
-            st.markdown("Tabela com os dados detalhados de cada prova para a distância selecionada.")
-            
+            st.markdown("Dados detalhados de cada prova para a distância selecionada.")
+
     st.dataframe(
         df_distancia[["data_inicio", "name", "distancia_km", "tempo_formatado", "pace_formatado"]],
         use_container_width=True,
-        hide_index=True
+        hide_index=True,
     )
